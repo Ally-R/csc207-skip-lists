@@ -1,4 +1,4 @@
 Skip Lists Assignment
 =====================
 
-Some starter code for the skip list assignment.
+Kandice Wu and Ally Rogers

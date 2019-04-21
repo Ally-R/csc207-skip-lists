@@ -86,12 +86,26 @@ public class SkipList<K,V> implements SimpleMap<K,V> {
   // | SimpleMap methods |
   // +-------------------+
 
+  /**
+   * Set the value associated with key.
+   * 
+   * @return the previous value associated with key (or null, if there's no
+   *         such value)
+   *         
+   * @throws NullPointerException if the key is null.
+   */
   @Override
   public V set(K key, V value) {
     // TODO Auto-generated method stub
     return null;
   } // set(K,V)
 
+  /**
+   * Get the value associated with key.
+   * 
+   * @throws IndexOutOfBoundsException if the key is not in the map.
+   * @throws NullPointerException if the key is null.
+   */
   @Override
   public V get(K key) {
     if (key == null) {
@@ -101,23 +115,38 @@ public class SkipList<K,V> implements SimpleMap<K,V> {
     return null;
   } // get(K,V)
 
+  /**
+   * Determine how many values are in the map.
+   */
   @Override
   public int size() {
     return this.size;
   } // size()
 
+  /**
+   * Determine if a key appears in the table.
+   */
   @Override
   public boolean containsKey(K key) {
     // TODO Auto-generated method stub
     return false;
   } // containsKey(K)
 
+  /**
+   * Remove the value with the given key.
+   * 
+   * @return The associated value (or null, if there is no associated value).
+   * @throws NullPointerException if the key is null.
+   */
   @Override
   public V remove(K key) {
     // TODO Auto-generated method stub
     return null;
   } // remove(K)
 
+  /**
+   * Get an iterator for all of the keys in the map.
+   */
   @Override
   public Iterator<K> keys() {
     return new Iterator<K>() {
@@ -140,6 +169,9 @@ public class SkipList<K,V> implements SimpleMap<K,V> {
     };
   } // keys()
 
+  /**
+   * Get an iterator for all of the values in the map.
+   */
   @Override
   public Iterator<V> values() {
     return new Iterator<V>() {
@@ -162,6 +194,9 @@ public class SkipList<K,V> implements SimpleMap<K,V> {
     };
   } // values()
 
+  /**
+   * Apply a function to each key/value pair.
+   */
   @Override
   public void forEach(BiConsumer<? super K, ? super V> action) {
     // TODO Auto-generated method stub
