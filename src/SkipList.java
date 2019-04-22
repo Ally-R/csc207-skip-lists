@@ -96,7 +96,29 @@ public class SkipList<K,V> implements SimpleMap<K,V> {
    */
   @Override
   public V set(K key, V value) {
-    // TODO Auto-generated method stub
+    if (key == null) {
+      throw new NullPointerException();
+    } // if key null
+    ArrayList<SLNode<K,V>> prev = new ArrayList<SLNode<K,V>>(this.height);
+    SLNode<K, V> current = this.front.get(this.height - 1);
+    for (int i = this.height - 1; i >= 0; i--) {
+      while (current.next != null && this.comparator.compare(current.next.get(i).key, key) < 0) {
+        current = current.next.get(i);
+      } // while
+      if (this.comparator.compare(current.next.get(i).key, key) == 0) {
+        current = current.next.get(i);
+        V temp = current.value;
+        current.value = value;
+        return temp;
+      } // if found key
+      prev.set(i, current);
+    } // for each level
+    // Initialize new random size node = set
+    for (int i = 0; i < set.next.size(); i++) {
+      set.next.set(i, prev.next.get(i));
+      prev.next.set(i, set);
+    } // for (initialize new node)
+    // Add value here instead maybe? -- actually I think you have to do this.
     return null;
   } // set(K,V)
 
