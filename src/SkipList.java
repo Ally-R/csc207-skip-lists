@@ -287,7 +287,7 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
    */
   int randomHeight() {
     int result = 1;
-    while (rand.nextDouble() < prob && result < this.height) {
+    while (rand.nextDouble() < prob) {
       result = result + 1;
     } // while
     return result;
