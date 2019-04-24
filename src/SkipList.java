@@ -97,28 +97,47 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
     } // if key null
     // array of prev pointers
     ArrayList<SLNode<K, V>> prev = new ArrayList<SLNode<K, V>>(this.height);
+    for (int i = 0; i < this.height; i++) {
+      prev.add(null);
+    } // for (initialize prev array)
     SLNode<K, V> current = this.front.get(this.height - 1);
-    for (int lvl = this.height - 1; current != null && lvl >= 0; lvl--) {
-      while (current.next != null && this.comparator.compare(current.next.get(lvl).key, key) < 0) {
-        current = current.next.get(lvl);
-      } // while current < key at level lvl
-      if (this.comparator.compare(current.next.get(lvl).key, key) == 0) {
-        current = current.next.get(lvl);
-        V temp = current.value;
-        current.value = value;
-        return temp;
-      } // if found key, update value
-      prev.set(lvl, current);
+    for (int lvl = this.height - 1; lvl >= 0; lvl--) {
+      if (current != null) {
+        while (current.next.get(lvl) != null
+            && this.comparator.compare(current.next.get(lvl).key, key) < 0) {
+          current = current.next.get(lvl);
+        } // while current < key at level lvl
+        if (current.next.get(lvl) != null
+            && this.comparator.compare(current.next.get(lvl).key, key) == 0) {
+          current = current.next.get(lvl);
+          V temp = current.value;
+          current.value = value;
+          return temp;
+        } // if found key, update value
+      } // if current not null
+      else if (lvl > 0) {
+        current = this.front.get(lvl - 1);
+      } // else
+      prev.set(lvl, current); // add prev pointer to prev array
     } // for each level
     SLNode<K, V> setNode = new SLNode<K, V>(key, value, this.randomHeight());
-    for (int lvl = 0; lvl < setNode.next.size(); lvl++) {
-      if (prev.get(lvl) == null) {
+    for (int lvl = this.height; lvl <= setNode.next.size(); lvl++) {
+      this.front.add(setNode);
+      setNode.next.set(lvl - 1, null);
+    } // if node largest yet
+    for (int lvl = 0; lvl < setNode.next.size() && lvl < this.height; lvl++) {
+      if (this.front.get(lvl) == null) {
+        setNode.next.set(lvl, null);
+      } else if (prev.get(lvl) == null) {
         setNode.next.set(lvl, front.get(lvl).next.get(lvl));
         front.get(lvl).next.set(lvl, setNode);
       } else {
         setNode.next.set(lvl, prev.get(lvl).next.get(lvl));
         prev.get(lvl).next.set(lvl, setNode);
       } // else
+      if (this.height < setNode.next.size()) {
+        this.height = setNode.next.size();
+      } // if (update height)
     } // for (initialize new node)
     this.size++;
     return null;
@@ -137,12 +156,19 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
     } // if
     SLNode<K, V> current = this.front.get(this.height - 1);
     for (int lvl = this.height - 1; lvl >= 0; lvl--) {
-      while (current.next != null && this.comparator.compare(current.next.get(lvl).key, key) < 0) {
-        current = current.next.get(lvl);
-      } // while current < key at level lvl
-      if (this.comparator.compare(current.next.get(lvl).key, key) == 0) {
-        return current.next.get(lvl).value;
-      } // if found key, return true
+      if (current != null) {
+        while (current.next.get(lvl) != null
+            && this.comparator.compare(current.next.get(lvl).key, key) < 0) {
+          current = current.next.get(lvl);
+        } // while current < key at level lvl
+        if (current.next.get(lvl) != null
+            && this.comparator.compare(current.next.get(lvl).key, key) == 0) {
+          return current.next.get(lvl).value;
+        } // if found key, return true
+      } // if current not null
+      else if (lvl > 0) {
+        current = this.front.get(lvl - 1);
+      } // else
     } // for each level
     throw new IndexOutOfBoundsException("key invalid: " + key);
   } // get(K,V)
@@ -165,12 +191,19 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
     } // if
     SLNode<K, V> current = this.front.get(this.height - 1);
     for (int lvl = this.height - 1; lvl >= 0; lvl--) {
-      while (current.next != null && this.comparator.compare(current.next.get(lvl).key, key) < 0) {
-        current = current.next.get(lvl);
-      } // while current < key at level lvl
-      if (this.comparator.compare(current.next.get(lvl).key, key) == 0) {
-        return true;
-      } // if found key, return true
+      if (current != null) {
+        while (current.next.get(lvl) != null
+            && this.comparator.compare(current.next.get(lvl).key, key) < 0) {
+          current = current.next.get(lvl);
+        } // while current < key at level lvl
+        if (current.next.get(lvl) != null
+            && this.comparator.compare(current.next.get(lvl).key, key) == 0) {
+          return true;
+        } // if found key, return true
+      } // if current not null
+      else if (lvl > 0) {
+        current = this.front.get(lvl - 1);
+      } // else
     } // for each level
     return false;
   } // containsKey(K)
@@ -190,12 +223,19 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
     ArrayList<SLNode<K, V>> prev = new ArrayList<SLNode<K, V>>(this.height);
     SLNode<K, V> current = this.front.get(this.height - 1);
     for (int lvl = this.height - 1; lvl >= 0; lvl--) {
-      while (current.next != null && this.comparator.compare(current.next.get(lvl).key, key) < 0) {
-        current = current.next.get(lvl);
-      } // while current < key at level lvl
-      if (this.comparator.compare(current.next.get(lvl).key, key) == 0) {
-        prev.set(lvl, current);
-      } // if found key, update value
+      if (current != null) {
+        while (current.next.get(lvl) != null
+            && this.comparator.compare(current.next.get(lvl).key, key) < 0) {
+          current = current.next.get(lvl);
+        } // while current < key at level lvl
+        if (current.next.get(lvl) != null
+            && this.comparator.compare(current.next.get(lvl).key, key) == 0) {
+          prev.set(lvl, current);
+        } // if found key, update value
+      } // if current not null
+      else if (lvl > 0) {
+        current = this.front.get(lvl - 1);
+      } // else
     } // for each level
     V temp = current.next.get(0).value;
     if (temp == null) {
@@ -263,8 +303,11 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
    */
   @Override
   public void forEach(BiConsumer<? super K, ? super V> action) {
-    // TODO Auto-generated method stub
-
+    Iterator<SLNode<K, V>> it = this.nodes();
+    while (it.hasNext()) {
+      SLNode<K, V> temp = it.next();
+      action.accept(temp.key, temp.value);
+    } // while
   } // forEach
 
   // +----------------------+----------------------------------------
@@ -275,8 +318,65 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
    * Dump the tree to some output location.
    */
   public void dump(PrintWriter pen) {
-    // Forthcoming
+    String leading = "          ";
+
+    SLNode<K, V> current = front.get(0);
+
+    // Print some X's at the start
+    pen.print(leading);
+    for (int level = 0; level < this.height; level++) {
+      pen.print(" X");
+    } // for
+    pen.println();
+    printLinks(pen, leading);
+
+    while (current != null) {
+      // Print out the key as a fixed-width field.
+      // (There's probably a better way to do this.)
+      String str;
+      if (current.key == null) {
+        str = "<null>";
+      } else {
+        str = current.key.toString();
+      } // if/else
+      if (str.length() < leading.length()) {
+        pen.print(leading.substring(str.length()) + str);
+      } else {
+        pen.print(str.substring(0, leading.length()));
+      } // if/else
+
+      // Print an indication for the links it has.
+      for (int level = 0; level < current.next.size(); level++) {
+        pen.print("-*");
+      } // for
+      // Print an indication for the links it lacks.
+      for (int level = current.next.size(); level < this.height; level++) {
+        pen.print(" |");
+      } // for
+      pen.println();
+      printLinks(pen, leading);
+
+      current = current.next.get(0);
+    } // while
+
+    // Print some O's at the start
+    pen.print(leading);
+    for (int level = 0; level < this.height; level++) {
+      pen.print(" O");
+    } // for
+    pen.println();
   } // dump(PrintWriter)
+
+  /**
+   * Print some links (for dump).
+   */
+  void printLinks(PrintWriter pen, String leading) {
+    pen.print(leading);
+    for (int level = 0; level < this.height; level++) {
+      pen.print(" |");
+    } // for
+    pen.println();
+  } // printLinks
 
   // +---------+-----------------------------------------------------
   // | Helpers |
