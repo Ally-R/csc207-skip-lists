@@ -70,7 +70,6 @@ public class SkipListTests {
     this.ints = new SkipList<Integer, String>((i, j) -> i - j);
     this.strings = new SkipList<String, String>((s, t) -> s.compareTo(t));
     this.operations = new ArrayList<String>();
-    System.err.println("SETUP");
   } // setup
 
   /**
@@ -146,20 +145,20 @@ public class SkipListTests {
   // +--------------------+
 
   /**
-   * Add an integer to the ints list.
+   * Set an entry in the ints list.
    */
   void set(Integer i) {
     operations.add("set(" + i + ");");
     ints.set(i, value(i));
-  } // add
+  } // set(Integer)
 
   /**
-   * Add a string to the strings list.
+   * Set an entry in the strings list.
    */
   void set(String str) {
     operations.add("set(\"" + str + "\");");
     strings.set(str, value(str));
-  } // add(String)
+  } // set(String)
 
   /**
    * Remove an integer from the ints list.
@@ -205,7 +204,7 @@ public class SkipListTests {
   /**
    * A really simple test.  Add an element and make sure that it's there.
    */
-  @Test
+  //@Test
   public void simpleTest() {
     setup();
     set("hello");
@@ -319,6 +318,68 @@ public class SkipListTests {
       fail("Operations failed");
     } // if (!ok)
   } // randomTest()
+  
+  /**
+   * Test that both iterators work on an ordered list
+   */
+  @Test
+  public void testIterators() {
+    setup();
+    for (int i = 0; i < 50; i++) {
+      set(i);
+    } // for
+    Iterator<Integer> itKeys = ints.keys();
+    Iterator<String> itVals = ints.values();
+    for (int i = 0; itKeys.hasNext(); i++) {
+      assertTrue(itKeys.next().compareTo(i) == 0);
+      assertTrue(itVals.next().compareTo(value(i)) == 0);
+    } // for
+  } // testStaysOrdered()
+  
+  /**
+   * Test a list that is added in reverse order
+   */
+  @Test
+  public void testBackwards() {
+    setup();
+    for (int i = 49; i >= 0; i--) {
+      set(i);
+    } // for
+    Iterator<Integer> itKeys = ints.keys();
+    Iterator<String> itVals = ints.values();
+    for (int i = 0; itKeys.hasNext(); i++) {
+      assertTrue(itKeys.next().compareTo(i) == 0);
+      assertTrue(itVals.next().compareTo(value(i)) == 0);
+    } // for
+  } // testBackwards()
+  
+  /**
+   * Test removing everything from a list
+   */
+  @Test
+  public void testRemoveAll() {
+    setup();
+    // Keep track of the values that are currently in the sorted list.
+    ArrayList<Integer> keys = new ArrayList<Integer>();
+    for (int i = 0; i < 100; i++) {
+      int rand = random.nextInt(1000);
+      keys.add(rand);
+      set(rand);
+    } // for
+    assertTrue(ints.size == 100);
+    for (int i = 0; i < 100; i++) {
+      remove(keys.get(i));
+    } // for
+    assertTrue(ints.size == 0);
+  } // testRemoveAll()
+  
+  /**
+   * Test the forEach method
+   */
+  @Test
+  public void testForEach() {
+    // TODO
+  } // testForEach()
   
   public static void main(String[] args) {
     SkipListTests slt = new SkipListTests();
