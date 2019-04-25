@@ -125,19 +125,20 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
       this.front.add(setNode);
       setNode.next.set(lvl - 1, null);
     } // if node largest yet
-    for (int lvl = 0; lvl < setNode.next.size() && lvl < this.height; lvl++) {
+    if (this.height < setNode.next.size()) {
+      this.height = setNode.next.size();
+    } // if (update height)
+    for (int lvl = 0; lvl < setNode.next.size() && lvl < prev.size(); lvl++) {
       if (this.front.get(lvl) == null) {
         setNode.next.set(lvl, null);
-      } else if (prev.get(lvl) == null) {
+        front.set(lvl, setNode);
+      } /*else if (prev.get(lvl) == null) {
         setNode.next.set(lvl, front.get(lvl).next.get(lvl));
-        front.get(lvl).next.set(lvl, setNode);
-      } else {
+        front.get.next.set(lvl, setNode);
+      } */ else {
         setNode.next.set(lvl, prev.get(lvl).next.get(lvl));
         prev.get(lvl).next.set(lvl, setNode);
       } // else
-      if (this.height < setNode.next.size()) {
-        this.height = setNode.next.size();
-      } // if (update height)
     } // for (initialize new node)
     this.size++;
     return null;
@@ -192,6 +193,9 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
     SLNode<K, V> current = this.front.get(this.height - 1);
     for (int lvl = this.height - 1; lvl >= 0; lvl--) {
       if (current != null) {
+        if (current.next.get(lvl) == null && this.comparator.compare(current.key, key) == 0) {
+          return true;
+        } // if current key matches key
         while (current.next.get(lvl) != null
             && this.comparator.compare(current.next.get(lvl).key, key) < 0) {
           current = current.next.get(lvl);
