@@ -361,7 +361,6 @@ public class SkipListTests {
     // Keep track of the values that are currently in the sorted list.
     ArrayList<Integer> keys = new ArrayList<Integer>();
     for (int i = 0; i < 100; i++) {
-      // int rand = random.nextInt(1000);
       keys.add(i);
       set(i);
     } // for
@@ -371,7 +370,7 @@ public class SkipListTests {
     } // for
     assertTrue(ints.size == 0);
   } // testRemoveAll()
-  
+
   /**
    * Test removing everything from a list in reverse order
    */
@@ -381,7 +380,6 @@ public class SkipListTests {
     // Keep track of the values that are currently in the sorted list.
     ArrayList<Integer> keys = new ArrayList<Integer>();
     for (int i = 0; i < 100; i++) {
-      // int rand = random.nextInt(1000);
       keys.add(i);
       set(i);
     } // for
@@ -395,18 +393,38 @@ public class SkipListTests {
   /**
    * Test the forEach method
    */
-  // @Test
+  @Test
   public void testForEach() {
-    // TODO
+    setup();
+    ArrayList<Integer> desiredKeys = new ArrayList<Integer>();
+    ArrayList<Integer> listKeys = new ArrayList<Integer>();
+    for (int i = 0; i < 100; i++) {
+      desiredKeys.add(i + 2);
+      set(i);
+    } // for
+    ints.forEach((key, val) -> System.err.println(key + ":" + val + " "));
+    ints.forEach((key, val) -> listKeys.add(key + 2));
+    for (int i = 0; i < 100; i++) {
+      assertEquals(desiredKeys.get(i), listKeys.get(i));
+    } // for
   } // testForEach()
 
   /**
-   * Test the get method
+   * Test large lists that are likely to generate nodes taller than initial height
    */
-  // @Test
-  public void testGet() {
-    // TODO
-  } // testGet()
+  @Test
+  public void testLargeList() {
+    setup();
+    ArrayList<Integer> keys = new ArrayList<Integer>();
+    for (int i = 0; i < 20000; i++) {
+      keys.add(i);
+      set(i);
+    } // for
+    for (int i = 0; i < 100; i++) {
+      int rand = random.nextInt(20000);
+      assertTrue(ints.containsKey(rand));
+    } // for
+  } // testLargeList()
 
   public static void main(String[] args) {
     SkipListTests slt = new SkipListTests();

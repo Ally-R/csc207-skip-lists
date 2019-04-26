@@ -4,11 +4,77 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.function.BiConsumer;
+import java.lang.Math;
 
 /**
  * An implementation of skip lists.
  */
 public class SkipList<K, V> implements SimpleMap<K, V> {
+  // +------+--------------------------------------------------------
+  // | Main |
+  // +------+
+
+  /**
+   * Tests to find Big O for SkipLists
+   */
+  public static void main(String[] args) throws Exception {
+    PrintWriter pen = new PrintWriter(System.out, true);
+    int avSetCounts[] = new int[4];
+    int avGetCounts[] = new int[4];
+    int avRemCounts[] = new int[4];
+    for (int lst = 1; lst <= 4; lst++) {
+      int setCounts[] = new int[4];
+      int getCounts[] = new int[4];
+      int remCounts[] = new int[4];
+      double lstlen = 500 * Math.pow(2, lst - 1); // List size
+      for (int test = 1; test <= 4; test++) {
+        SkipList<Integer, String> sklst = new SkipList<Integer, String>((i, j) -> i - j);
+
+        // Run the operations of interest on the list
+        for (int i = 0; i < lstlen; i++) {
+          sklst.set(i, SkipListTests.value(i));
+          sklst.get(i);
+        } // for
+        for (int i = 0; i < lstlen; i++) {
+          sklst.remove(i);
+        } // for
+
+        // Log the raw data
+        setCounts[test - 1] = sklst.setCount;
+        getCounts[test - 1] = sklst.getCount;
+        remCounts[test - 1] = sklst.remCount;
+
+        // Print the raw data
+        /*
+         * pen.println("List length " + (int) lstlen);
+         * pen.println(" Set = " + sklst.setCount);
+         * pen.println(" Get = " + sklst.getCount);
+         * pen.println(" Remove = " + sklst.remCount);
+         * pen.println();
+         */
+
+      } // for 4 test cycles
+
+      // Calculate the averages
+      avSetCounts[lst - 1] = ((setCounts[0] + setCounts[2] + setCounts[3] + setCounts[1]) / 4);
+      avGetCounts[lst - 1] = ((getCounts[0] + getCounts[2] + getCounts[3] + getCounts[1]) / 4);
+      avRemCounts[lst - 1] = ((remCounts[0] + remCounts[2] + remCounts[3] + remCounts[1]) / 4);
+
+      // Print the averages
+      pen.println("Averages for lstlen " + (int) lstlen + ":");
+      pen.println(" * Set = " + avSetCounts[lst - 1]);
+      pen.println(" * Get = " + avGetCounts[lst - 1]);
+      pen.println(" * Remove = " + avRemCounts[lst - 1]);
+      pen.println();
+
+      // Print the differences between list size and average
+      pen.println("Average / list size \n" + "For lstlen " + (int) lstlen + "");
+      pen.println(" * Set = " + (avSetCounts[lst - 1] / lstlen));
+      pen.println(" * Get = " + (avGetCounts[lst - 1] / lstlen));
+      pen.println(" * Remove = " + (avRemCounts[lst - 1] / lstlen));
+      pen.println();
+    } // for 4 lists
+  } // main
 
   // +-----------+---------------------------------------------------
   // | Constants |
@@ -53,6 +119,27 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
    * The probability used to determine the height of nodes.
    */
   double prob = 0.5;
+
+  /**
+   * The counter of core operations in set method: 
+   *  - switch a level
+   *  - move across the list on the current level.
+   */
+  int setCount = 0;
+
+  /**
+   * The counter of core operations in get method:
+   *   - switch a level
+   *   - move across the list on the current level.
+   */
+  int getCount = 0;
+
+  /**
+   * The counter of core operations in remove method:
+   *   - switch a level
+   *   - move across the list on the current level.
+   */
+  int remCount = 0;
 
   // +--------------+------------------------------------------------
   // | Constructors |
@@ -107,6 +194,7 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
     for (int lvl = this.height - 1; lvl >= 0; lvl--) {
       if (current == null && lvl > 0) {
         current = this.front.get(lvl - 1);
+        setCount++;
       } // if
       else if (current != null) {
         if (current == this.front.get(lvl) && this.comparator.compare(current.key, key) == 0) {
@@ -117,17 +205,20 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
             && this.comparator.compare(current.key, key) > 0) {
           if (lvl > 0) {
             current = this.front.get(lvl - 1);
+            setCount++;
           } // if not already at bottom level, move down a level
         } // else if
         else {
           while (current.next.get(lvl) != null
               && this.comparator.compare(current.next.get(lvl).key, key) < 0) {
             current = current.next.get(lvl);
+            setCount++;
           } // while current < key at level lvl
           prev.set(lvl, current); // add prev pointer to prev array
           if (current.next.get(lvl) != null
               && this.comparator.compare(current.next.get(lvl).key, key) == 0) {
             current = current.next.get(lvl);
+            setCount++;
             V temp = current.value;
             current.value = value;
             return temp;
@@ -146,6 +237,7 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
       this.height = setNode.next.size();
     } // if (update height)
     for (int lvl = 0; lvl < setNode.next.size() && lvl < prev.size(); lvl++) {
+      setCount++;
       if (prev.get(lvl) == null) {
         setNode.next.set(lvl, front.get(lvl));
         front.set(lvl, setNode);
@@ -175,6 +267,7 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
     for (int lvl = this.height - 1; lvl >= 0; lvl--) {
       if (current == null && lvl > 0) {
         current = this.front.get(lvl - 1);
+        getCount++;
       } // if
       else if (current != null) {
         if (current == this.front.get(lvl) && this.comparator.compare(current.key, key) == 0) {
@@ -183,16 +276,19 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
             && this.comparator.compare(current.key, key) > 0) {
           if (lvl > 0) {
             current = this.front.get(lvl - 1);
+            getCount++;
           } // if not already at bottom level, move down a level
         } // else if
         else {
           while (current.next.get(lvl) != null
               && this.comparator.compare(current.next.get(lvl).key, key) < 0) {
             current = current.next.get(lvl);
+            getCount++;
           } // while current < key at level lvl
           if (current.next.get(lvl) != null
               && this.comparator.compare(current.next.get(lvl).key, key) == 0) {
             current = current.next.get(lvl);
+            getCount++;
             return current.value;
           } // if found key, update value
         } // else
@@ -272,17 +368,20 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
     for (int lvl = this.height - 1; lvl >= 0; lvl--) {
       if (current == null && lvl > 0) {
         current = this.front.get(lvl - 1);
+        remCount++;
       } // if
       else if (current != null) {
         if (current == this.front.get(lvl) && this.comparator.compare(current.key, key) >= 0) {
           if (lvl > 0) {
             current = this.front.get(lvl - 1);
+            remCount++;
           } // if not already at bottom level, move down a level
         } // else if
         else {
           while (current.next.get(lvl) != null
               && this.comparator.compare(current.next.get(lvl).key, key) < 0) {
             current = current.next.get(lvl);
+            remCount++;
           } // while current < key at level lvl
           // prev.set(lvl, current); // add prev pointer to prev array
           if (current.next.get(lvl) != null
@@ -303,6 +402,7 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
     } // if current is the key
     else {
       temp = current.next.get(0);
+      remCount++;
     } // else
     if (temp != null && temp.next != null) {
       for (int lvl = 0; lvl < temp.next.size(); lvl++) {
@@ -545,5 +645,4 @@ class SLNode<K, V> {
   // +---------+-----------------------------------------------------
   // | Methods |
   // +---------+
-
 } // SLNode<K,V>
