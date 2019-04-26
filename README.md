@@ -3,6 +3,7 @@ Code for the 2019 Skip Lists assignment
 
 ## Complexity Analysis
 __Averages (output from terminal):__
+
 Averages for lstlen 500:
  * Set = 8486
  * Get = 7013
