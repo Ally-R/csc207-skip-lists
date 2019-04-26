@@ -20,16 +20,15 @@ public class SkipListTests {
   /**
    * Names of some numbers.
    */
-  static final String numbers[] =
-      {"zero", "one", "two", "three", "four", "five", "six", "seven", "eight",
-          "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen",
-          "sixteen", "seventeen", "eighteen", "nineteen"};
+  static final String numbers[] = {"zero", "one", "two", "three", "four", "five", "six", "seven",
+      "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen",
+      "seventeen", "eighteen", "nineteen"};
 
   /**
    * Names of more numbers.
    */
-  static final String tens[] = {"", "", "twenty", "thirty", "forty", "fifty",
-      "sixty", "seventy", "eighty", "ninety"};
+  static final String tens[] =
+      {"", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"};
 
   // +--------+----------------------------------------------------------
   // | Fields |
@@ -62,8 +61,8 @@ public class SkipListTests {
   // +---------+
 
   /**
-   * Set up everything.  Unfortunately, @BeforeEach doesn't seem
-   * to be working, so we do this manually.
+   * Set up everything. Unfortunately, @BeforeEach doesn't seem to be working, so we do this
+   * manually.
    */
   @BeforeEach
   public void setup() {
@@ -75,9 +74,9 @@ public class SkipListTests {
   /**
    * Dump a SkipList to stderr.
    */
-  static <K,V> void dump(SkipList<K,V> map) {
+  static <K, V> void dump(SkipList<K, V> map) {
     System.err.print("[");
-    map.forEach((key,value) -> System.err.println(key + ":" + value + " "));
+    map.forEach((key, value) -> System.err.println(key + ":" + value + " "));
     System.err.println("]");
   } // dump
 
@@ -202,9 +201,9 @@ public class SkipListTests {
   // +-------------+
 
   /**
-   * A really simple test.  Add an element and make sure that it's there.
+   * A really simple test. Add an element and make sure that it's there.
    */
-  //@Test
+  @Test
   public void simpleTest() {
     setup();
     set("hello");
@@ -215,7 +214,7 @@ public class SkipListTests {
   /**
    * Another simple test. The list should not contain anything when we start out.
    */
-  //@Test
+  @Test
   public void emptyTest() {
     setup();
     assertFalse(strings.containsKey("hello"));
@@ -228,7 +227,7 @@ public class SkipListTests {
   /**
    * Verify that a randomly created list is sorted.
    */
- // @Test
+  @Test
   public void testOrdered() {
     setup();
     // Add a bunch of values
@@ -248,7 +247,7 @@ public class SkipListTests {
   /**
    * Verify that a randomly created list contains all the values we added to the list.
    */
-  //@Test
+  @Test
   public void testContainsOnlyAdd() {
     setup();
     ArrayList<Integer> keys = new ArrayList<Integer>();
@@ -273,7 +272,7 @@ public class SkipListTests {
   /**
    * An extensive randomized test.
    */
-  //@Test
+  @Test
   public void randomTest() {
     setup();
     // Keep track of the values that are currently in the sorted list.
@@ -289,7 +288,7 @@ public class SkipListTests {
           set(rand);
         } // if it's not already there.
         if (!ints.containsKey(rand)) {
-          log("After adding " + rand + ", contains(" + rand +") fails");
+          log("After adding " + rand + ", contains(" + rand + ") fails");
           ok = false;
         } // if (!ints.contains(rand))
       } // if we add
@@ -298,7 +297,7 @@ public class SkipListTests {
         remove(rand);
         keys.remove((Integer) rand);
         if (ints.containsKey(rand)) {
-          log("After removing " + rand + ", contains(" + rand +") succeeds");
+          log("After removing " + rand + ", contains(" + rand + ") succeeds");
           ok = false;
         } // if ints.contains(rand)
       } // if we remove
@@ -318,11 +317,11 @@ public class SkipListTests {
       fail("Operations failed");
     } // if (!ok)
   } // randomTest()
-  
+
   /**
    * Test that both iterators work on an ordered list
    */
-  //@Test
+  @Test
   public void testIterators() {
     setup();
     for (int i = 0; i < 50; i++) {
@@ -335,11 +334,11 @@ public class SkipListTests {
       assertTrue(itVals.next().compareTo(value(i)) == 0);
     } // for
   } // testStaysOrdered()
-  
+
   /**
    * Test a list that is added in reverse order
    */
- // @Test
+  @Test
   public void testBackwards() {
     setup();
     for (int i = 49; i >= 0; i--) {
@@ -352,9 +351,9 @@ public class SkipListTests {
       assertTrue(itVals.next().compareTo(value(i)) == 0);
     } // for
   } // testBackwards()
-  
+
   /**
-   * Test removing everything from a list
+   * Test removing everything from a list in order
    */
   @Test
   public void testRemoveAll() {
@@ -362,37 +361,53 @@ public class SkipListTests {
     // Keep track of the values that are currently in the sorted list.
     ArrayList<Integer> keys = new ArrayList<Integer>();
     for (int i = 0; i < 100; i++) {
-      //int rand = random.nextInt(1000);
+      // int rand = random.nextInt(1000);
       keys.add(i);
       set(i);
     } // for
-    dump(ints);
-    System.err.println("size is " + ints.size);
     assertTrue(ints.size == 100);
     for (int i = 0; i < 100; i++) {
       remove(keys.get(i));
     } // for
-    dump(ints);
-    System.err.println("size is " + ints.size);
     assertTrue(ints.size == 0);
   } // testRemoveAll()
   
   /**
+   * Test removing everything from a list in reverse order
+   */
+  @Test
+  public void testRemoveAllBackwards() {
+    setup();
+    // Keep track of the values that are currently in the sorted list.
+    ArrayList<Integer> keys = new ArrayList<Integer>();
+    for (int i = 0; i < 100; i++) {
+      // int rand = random.nextInt(1000);
+      keys.add(i);
+      set(i);
+    } // for
+    assertTrue(ints.size == 100);
+    for (int i = 99; i >= 0; i--) {
+      remove(keys.get(i));
+    } // for
+    assertTrue(ints.size == 0);
+  } // testRemoveAllBackwards()
+
+  /**
    * Test the forEach method
    */
- // @Test
+  // @Test
   public void testForEach() {
     // TODO
   } // testForEach()
-  
+
   /**
    * Test the get method
    */
- // @Test
+  // @Test
   public void testGet() {
     // TODO
   } // testGet()
-  
+
   public static void main(String[] args) {
     SkipListTests slt = new SkipListTests();
     slt.setup();

@@ -169,7 +169,7 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
     if (key == null) {
       throw new NullPointerException("null key");
     } // if
-    
+
     // Search SkipList for key
     SLNode<K, V> current = this.front.get(this.height - 1);
     for (int lvl = this.height - 1; lvl >= 0; lvl--) {
@@ -217,16 +217,7 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
     if (key == null) {
       throw new NullPointerException("null key");
     } // if
-    
-    /*
-    try {
-      this.get(key);
-    } catch (Exception e) {
-      return false;
-    } // try/catch
-    return true;
-    */
-    
+
     // Search SkipList for key
     SLNode<K, V> current = this.front.get(this.height - 1);
     for (int lvl = this.height - 1; lvl >= 0; lvl--) {
@@ -269,13 +260,13 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
     if (key == null) {
       throw new NullPointerException("null key");
     } // if
-    
+
     // array of prev pointers
     ArrayList<SLNode<K, V>> prev = new ArrayList<SLNode<K, V>>(this.height);
     for (int i = 0; i < this.height; i++) {
       prev.add(null);
     } // for (initialize prev array)
-    
+
     // Search SkipList for key
     SLNode<K, V> current = this.front.get(this.height - 1);
     for (int lvl = this.height - 1; lvl >= 0; lvl--) {
@@ -283,8 +274,7 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
         current = this.front.get(lvl - 1);
       } // if
       else if (current != null) {
-        if (current == this.front.get(lvl)
-            && this.comparator.compare(current.key, key) >= 0) {
+        if (current == this.front.get(lvl) && this.comparator.compare(current.key, key) >= 0) {
           if (lvl > 0) {
             current = this.front.get(lvl - 1);
           } // if not already at bottom level, move down a level
@@ -294,7 +284,7 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
               && this.comparator.compare(current.next.get(lvl).key, key) < 0) {
             current = current.next.get(lvl);
           } // while current < key at level lvl
-          //prev.set(lvl, current); // add prev pointer to prev array
+          // prev.set(lvl, current); // add prev pointer to prev array
           if (current.next.get(lvl) != null
               && this.comparator.compare(current.next.get(lvl).key, key) == 0) {
             prev.set(lvl, current);
@@ -302,28 +292,9 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
         } // else
       } // if current not null
     } // for each level
-    
-    
-    
-    /* for (int lvl = this.height - 1; lvl >= 0; lvl--) {
-      if (current != null) {
-        while (current.next.get(lvl) != null
-            && this.comparator.compare(current.next.get(lvl).key, key) < 0) {
-          current = current.next.get(lvl);
-        } // while current < key at level lvl
-        if (current.next.get(lvl) != null
-            && this.comparator.compare(current.next.get(lvl).key, key) == 0) {
-          prev.set(lvl, current);
-        } // if found key, update value
-      } // if current not null
-      else if (lvl > 0) {
-        current = this.front.get(lvl - 1);
-      } // else
-    } // for each level
-    */
-    
+
     // Remove value
-    if (current == null || current.next.get(0) == null) {
+    if (current == null) {
       return null;
     } // if key not found
     SLNode<K, V> temp;
@@ -332,16 +303,21 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
     } // if current is the key
     else {
       temp = current.next.get(0);
-    }// else
-    for (int lvl = 0; lvl < temp.next.size(); lvl++) {
-      //if (prev.get(lvl) == null && current.next.size() > lvl) {
-        //this.front.set(lvl, current.next.get(lvl));
-      //} // if (reset front pointers)
-      //else 
-      if (prev.get(lvl) != null) {
-        prev.get(lvl).next.set(lvl, prev.get(lvl).next.get(lvl).next.get(lvl));
-      } // else
-    } // for
+    } // else
+    if (temp != null && temp.next != null) {
+      for (int lvl = 0; lvl < temp.next.size(); lvl++) {
+        if (prev.get(lvl) != null) {
+          prev.get(lvl).next.set(lvl, prev.get(lvl).next.get(lvl).next.get(lvl));
+        } else if (this.comparator.compare(this.front.get(lvl).key, key) == 0) {
+          this.front.set(lvl, this.front.get(lvl).next.get(lvl));
+        } else {
+          return null;
+        } // else
+      } // for
+    } // if
+    else {
+      return null;
+    } // if temp is null
     size--;
     return temp.value;
   } // remove(K)
