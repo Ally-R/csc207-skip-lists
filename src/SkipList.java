@@ -19,10 +19,11 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
    */
   public static void main(String[] args) throws Exception {
     PrintWriter pen = new PrintWriter(System.out, true);
-    int avSetCounts[] = new int[4];
-    int avGetCounts[] = new int[4];
-    int avRemCounts[] = new int[4];
-    for (int lst = 1; lst <= 4; lst++) {
+    int trials = 4;
+    int avSetCounts[] = new int[trials];
+    int avGetCounts[] = new int[trials];
+    int avRemCounts[] = new int[trials];
+    for (int lst = 1; lst <= trials; lst++) {
       int setCounts[] = new int[4];
       int getCounts[] = new int[4];
       int remCounts[] = new int[4];
@@ -56,24 +57,29 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
       } // for 4 test cycles
 
       // Calculate the averages
-      avSetCounts[lst - 1] = ((setCounts[0] + setCounts[2] + setCounts[3] + setCounts[1]) / 4);
-      avGetCounts[lst - 1] = ((getCounts[0] + getCounts[2] + getCounts[3] + getCounts[1]) / 4);
-      avRemCounts[lst - 1] = ((remCounts[0] + remCounts[2] + remCounts[3] + remCounts[1]) / 4);
+      avSetCounts[lst - 1] = ((setCounts[0] + setCounts[1] + setCounts[2] + setCounts[3]) / 4);
+      avGetCounts[lst - 1] = ((getCounts[0] + getCounts[1] + getCounts[2] + getCounts[3]) / 4);
+      avRemCounts[lst - 1] = ((remCounts[0] + remCounts[1] + remCounts[2] + remCounts[3]) / 4);
 
+      // Print header
+      pen.println("-----------------------");
+      pen.println("List length " + (int) lstlen);
+      pen.println("-----------------------");
+      
       // Print the averages
-      pen.println("Averages for lstlen " + (int) lstlen + ":");
+      pen.println("Averages:");
       pen.println(" * Set = " + avSetCounts[lst - 1]);
       pen.println(" * Get = " + avGetCounts[lst - 1]);
       pen.println(" * Remove = " + avRemCounts[lst - 1]);
       pen.println();
 
       // Print the differences between list size and average
-      pen.println("Average / list size \n" + "For lstlen " + (int) lstlen + "");
-      pen.println(" * Set = " + (avSetCounts[lst - 1] / lstlen));
-      pen.println(" * Get = " + (avGetCounts[lst - 1] / lstlen));
-      pen.println(" * Remove = " + (avRemCounts[lst - 1] / lstlen));
+      pen.println("List Size / Average:");
+      pen.println(" * Set = " + (lstlen / avSetCounts[lst - 1]));
+      pen.println(" * Get = " + (lstlen / avGetCounts[lst - 1]));
+      pen.println(" * Remove = " + (lstlen / avRemCounts[lst - 1]));
       pen.println();
-    } // for 4 lists
+    } // for trails number of lists
   } // main
 
   // +-----------+---------------------------------------------------
