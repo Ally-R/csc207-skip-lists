@@ -8,6 +8,10 @@ import java.lang.Math;
 
 /**
  * An implementation of skip lists.
+ * 
+ * @author Ally Rogers
+ * @author Kandice Wu
+ * @author Samuel Rebelsky
  */
 public class SkipList<K, V> implements SimpleMap<K, V> {
   // +------+--------------------------------------------------------
@@ -19,15 +23,19 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
    */
   public static void main(String[] args) throws Exception {
     PrintWriter pen = new PrintWriter(System.out, true);
-    int trials = 6;
-    int avSetCounts[] = new int[trials];
-    int avGetCounts[] = new int[trials];
-    int avRemCounts[] = new int[trials];
-    for (int lst = 1; lst <= trials; lst++) {
+    int numlists = 6; // Number of different list sizes to test
+    int avSetCounts[] = new int[numlists];
+    int avGetCounts[] = new int[numlists];
+    int avRemCounts[] = new int[numlists];
+    
+    // Run tests for numlists number of different list sizes
+    for (int lst = 1; lst <= numlists; lst++) {
       int setCounts[] = new int[4];
       int getCounts[] = new int[4];
       int remCounts[] = new int[4];
       double lstlen = 500 * Math.pow(2, lst - 1); // List size
+      
+      // Run 4 trials of each list size
       for (int test = 1; test <= 4; test++) {
         SkipList<Integer, String> sklst = new SkipList<Integer, String>((i, j) -> i - j);
 
@@ -79,7 +87,7 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
       pen.println(" * Get = " + (lstlen / avGetCounts[lst - 1]));
       pen.println(" * Remove = " + (lstlen / avRemCounts[lst - 1]));
       pen.println();
-    } // for trails number of lists
+    } // for numlists number of different sized lists
   } // main
 
   // +-----------+---------------------------------------------------
@@ -129,21 +137,24 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
   /**
    * The counter of core operations in set method: 
    *  - switch a level
-   *  - move across the list on the current level.
+   *  - look across list on current level
+   *  - move across the list on the current level
    */
   int setCount = 0;
 
   /**
    * The counter of core operations in get method:
    *   - switch a level
-   *   - move across the list on the current level.
+   *   - look across list on current level
+   *   - move across the list on the current level
    */
   int getCount = 0;
 
   /**
    * The counter of core operations in remove method:
    *   - switch a level
-   *   - move across the list on the current level.
+   *   - look across list on current level
+   *   - move across the list on the current level
    */
   int remCount = 0;
 
@@ -179,8 +190,11 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
   /**
    * Set the value associated with key.
    * 
+   * @pre key is not null
+   * @post If key exists in list, change associated value to given value
+   * @post If key not in list, add key/value pair to list
+   * @post Updates setCount counter
    * @return the previous value associated with key (or null, if there's no such value)
-   * 
    * @throws NullPointerException if the key is null.
    */
   @Override
@@ -264,6 +278,10 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
   /**
    * Get the value associated with key.
    * 
+   * @pre key is not null
+   * @pre key exists in list
+   * @post Returns value associated with key
+   * @post Updates getCount counter
    * @throws IndexOutOfBoundsException if the key is not in the map.
    * @throws NullPointerException if the key is null.
    */
@@ -314,6 +332,9 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
 
   /**
    * Determine how many values are in the map.
+   * 
+   * @pre None.
+   * @post Returns the list size
    */
   @Override
   public int size() {
@@ -322,6 +343,10 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
 
   /**
    * Determine if a key appears in the table.
+   * 
+   * @pre key is not null
+   * @post Returns true if key exists in list, false otherwise
+   * @throws NullPointerException precondition not met
    */
   @Override
   public boolean containsKey(K key) {
@@ -363,6 +388,9 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
   /**
    * Remove the value with the given key.
    * 
+   * @pre key is not null
+   * @post Entry with given key removed from list, if present
+   * @post Updates remCount counter
    * @return The associated value (or null, if there is no associated value).
    * @throws NullPointerException if the key is null.
    */
@@ -400,7 +428,6 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
             current = current.next.get(lvl);
             remCount++;
           } // while current < key at level lvl
-          // prev.set(lvl, current); // add prev pointer to prev array
           remCount++;
           if (current.next.get(lvl) != null
               && this.comparator.compare(current.next.get(lvl).key, key) == 0) {
@@ -449,16 +476,31 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
     return new Iterator<K>() {
       Iterator<SLNode<K, V>> nit = SkipList.this.nodes();
 
+      /**
+       * Determine if there are any more elements in the list
+       */
       @Override
       public boolean hasNext() {
         return nit.hasNext();
       } // hasNext()
 
+      /**
+       * Return the key of the next element
+       * 
+       * @pre there is a next element
+       * @post returns next key
+       * @throws IllegalStateException if precondition not met
+       */
       @Override
       public K next() {
         return nit.next().key;
       } // next()
 
+      /**
+       * Remove not implemented.
+       * 
+       * @throws UnsupportedOperationException
+       */
       @Override
       public void remove() {
         nit.remove();
@@ -474,16 +516,31 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
     return new Iterator<V>() {
       Iterator<SLNode<K, V>> nit = SkipList.this.nodes();
 
+      /**
+       * Determine if there are any more elements in the list
+       */
       @Override
       public boolean hasNext() {
         return nit.hasNext();
       } // hasNext()
 
+      /**
+       * Return the value of the next element
+       * 
+       * @pre there is a next element
+       * @post returns next value
+       * @throws IllegalStateException if precondition not met
+       */
       @Override
       public V next() {
         return nit.next().value;
       } // next()
 
+      /**
+       * Remove not implemented.
+       * 
+       * @throws UnsupportedOperationException
+       */
       @Override
       public void remove() {
         nit.remove();
@@ -493,6 +550,9 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
 
   /**
    * Apply a function to each key/value pair.
+   * 
+   * @pre None.
+   * @post action applied to each key/value pair in the list.
    */
   @Override
   public void forEach(BiConsumer<? super K, ? super V> action) {

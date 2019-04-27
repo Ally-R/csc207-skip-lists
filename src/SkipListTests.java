@@ -10,6 +10,8 @@ import org.junit.jupiter.api.BeforeEach;
  * Some tests of skip lists.
  *
  * @author Samuel A. Rebelsky
+ * @author Kandice Wu
+ * @author Ally Rogers
  */
 public class SkipListTests {
 
