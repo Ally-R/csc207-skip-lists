@@ -2,7 +2,7 @@
 Code for the 2019 Skip Lists assignment
 
 ## Complexity Analysis
-#### Averages (output from terminal):
+### Data (output from terminal):
 __List length 500:__
 
 Averages:
