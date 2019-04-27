@@ -3,50 +3,80 @@ Code for the 2019 Skip Lists assignment
 
 ## Complexity Analysis
 ### Data (output from terminal):
-__List length 500:__
-
+-----------------------
+List length 500
+-----------------------
 Averages:
- * Set = 8486
- * Get = 7013
+ * Set = 19933
+ * Get = 17874
  * Remove = 7500
- 
-Average / list size
- * Set = 16.972
- * Get = 14.026
- * Remove = 15.0
 
-__List length 1000:__
+List Size / Average:
+ * Set = 0.025084031505543572
+ * Get = 0.02797359292827571
+ * Remove = 0.06666666666666667
 
+-----------------------
+List length 1000
+-----------------------
 Averages:
- * Set = 16972
- * Get = 14027
+ * Set = 43472
+ * Get = 39528
  * Remove = 15000
 
-Average / list size:
- * Set = 16.972
- * Get = 14.027
- * Remove = 15.0
- 
-__List length 2000:__
+List Size / Average:
+ * Set = 0.023003312476996687
+ * Get = 0.02529852256628213
+ * Remove = 0.06666666666666667
 
+-----------------------
+List length 2000
+-----------------------
 Averages:
- * Set = 34019
- * Get = 27980
+ * Set = 91681
+ * Get = 83689
  * Remove = 30000
 
-Average / list size:
- * Set = 17.0095
- * Get = 13.99
- * Remove = 15.0
- 
-__List length 4000:__
+List Size / Average:
+ * Set = 0.021814770781296015
+ * Get = 0.023898003321822462
+ * Remove = 0.06666666666666667
 
+-----------------------
+List length 4000
+-----------------------
 Averages:
- * Set = 67993
- * Get = 56007
+ * Set = 199273
+ * Get = 183319
  * Remove = 60000
 
-Average / list size:
- * Set = 16.99825
- * Get = 14.00175
- * Remove = 15.0
+List Size / Average:
+ * Set = 0.020072965228605983
+ * Get = 0.021819887736677594
+ * Remove = 0.06666666666666667
+
+-----------------------
+List length 8000
+-----------------------
+Averages:
+ * Set = 426170
+ * Get = 394335
+ * Remove = 120000
+
+List Size / Average:
+ * Set = 0.018771851608513034
+ * Get = 0.02028731915756907
+ * Remove = 0.06666666666666667
+
+-----------------------
+List length 16000
+-----------------------
+Averages:
+ * Set = 864927
+ * Get = 800643
+ * Remove = 248000
+
+List Size / Average:
+ * Set = 0.01849867098610634
+ * Get = 0.019983937909904916
+ * Remove = 0.0645161290322580
