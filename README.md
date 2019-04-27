@@ -4,6 +4,7 @@ Code for the 2019 Skip Lists assignment
 ## Complexity Analysis
 #### Averages (output from terminal):
 __List length 500:__
+
 Averages:
  * Set = 8486
  * Get = 7013
@@ -15,6 +16,7 @@ Average / list size
  * Remove = 15.0
 
 __List length 1000:__
+
 Averages:
  * Set = 16972
  * Get = 14027
@@ -26,6 +28,7 @@ Average / list size:
  * Remove = 15.0
  
 __List length 2000:__
+
 Averages:
  * Set = 34019
  * Get = 27980
@@ -37,6 +40,7 @@ Average / list size:
  * Remove = 15.0
  
 __List length 4000:__
+
 Averages:
  * Set = 67993
  * Get = 56007
