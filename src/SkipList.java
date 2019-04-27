@@ -19,7 +19,7 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
    */
   public static void main(String[] args) throws Exception {
     PrintWriter pen = new PrintWriter(System.out, true);
-    int trials = 4;
+    int trials = 6;
     int avSetCounts[] = new int[trials];
     int avGetCounts[] = new int[trials];
     int avRemCounts[] = new int[trials];
@@ -215,14 +215,19 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
           } // if not already at bottom level, move down a level
         } // else if
         else {
+          setCount++;
           while (current.next.get(lvl) != null
               && this.comparator.compare(current.next.get(lvl).key, key) < 0) {
+            setCount++;
             current = current.next.get(lvl);
             setCount++;
           } // while current < key at level lvl
           prev.set(lvl, current); // add prev pointer to prev array
+          setCount++;
           if (current.next.get(lvl) != null
               && this.comparator.compare(current.next.get(lvl).key, key) == 0) {
+            setCount++;
+            setCount++;           
             current = current.next.get(lvl);
             setCount++;
             V temp = current.value;
@@ -286,13 +291,17 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
           } // if not already at bottom level, move down a level
         } // else if
         else {
+          getCount++;
           while (current.next.get(lvl) != null
               && this.comparator.compare(current.next.get(lvl).key, key) < 0) {
+            getCount++;
             current = current.next.get(lvl);
             getCount++;
           } // while current < key at level lvl
+          getCount++;
           if (current.next.get(lvl) != null
               && this.comparator.compare(current.next.get(lvl).key, key) == 0) {
+            getCount++;
             current = current.next.get(lvl);
             getCount++;
             return current.value;
@@ -384,14 +393,18 @@ public class SkipList<K, V> implements SimpleMap<K, V> {
           } // if not already at bottom level, move down a level
         } // else if
         else {
+          remCount++;
           while (current.next.get(lvl) != null
               && this.comparator.compare(current.next.get(lvl).key, key) < 0) {
+            remCount++;
             current = current.next.get(lvl);
             remCount++;
           } // while current < key at level lvl
           // prev.set(lvl, current); // add prev pointer to prev array
+          remCount++;
           if (current.next.get(lvl) != null
               && this.comparator.compare(current.next.get(lvl).key, key) == 0) {
+            remCount++;
             prev.set(lvl, current);
           } // if found key, update value
         } // else
